@@ -1,0 +1,48 @@
+{
+  "name": "cfg-watcher",
+  "version": "0.3.0",
+  "description": "Simple config watcher. Can watch for files or kubernetes configmap changes.",
+  "main": "index.js",
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schaze/node-cfg-watcher.git"
+  },
+  "homepage": "https://github.com/schaze/node-cfg-watcher#README.md",
+  "files": [
+    "*"
+  ],
+  "keywords": [
+    "kuberntes",
+    "watch",
+    "rxjs"
+  ],
+  "author": {
+    "name": "schaze",
+    "email": "schazet@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@tsconfig/node14": "~1.0.0",
+    "@types/node": "~14.17",
+    "gulp": "~4.0.2",
+    "gulp-json-editor": "~2.5.2",
+    "gulp-run": "~1.7.1",
+    "gulp-sourcemaps": "~3.0.0",
+    "gulp-typescript": "~5.0.1",
+    "merge2": "~1.4.1",
+    "tslint": "~5.18.0",
+    "typescript": "~4.4.0"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "~0.14.0",
+    "fast-deep-equal": "~3.1.3",
+    "jsonschema": "~1.4.0",
+    "k8s-watch-rx": "~0.3.4",
+    "rxjs": "~7.4.0",
+    "watch-rx-ts": "~1.2.3",
+    "winston": "~3.3.3"
+  }
+}
