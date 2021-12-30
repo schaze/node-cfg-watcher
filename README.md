@@ -22,7 +22,10 @@ const watcher = (BACKEND === 'file' ?
             new ConfigFileWatcher(['*.yaml', '*.yml'].map(fileFilter => join(CFG_FOLDER, fileFilter))) :
             new ConfigMapWatcher(CFG_CFGMAP_NAME));
 
-const contentWatcher = new ConfigContentWatcher(watcher, cfgSchema, rule => rule.id);
+const contentWatcher = new ConfigContentWatcher(
+    watcher, 
+    cfgSchema, 
+    cfgItem => cfgItem.id); // provide a method to obtain cfg item id
 
 
 
