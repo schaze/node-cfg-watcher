@@ -1,11 +1,11 @@
-import { connectable, ConnectableObservable, merge, of, Subject, Subscription } from "rxjs";
+import { connectable, ConnectableObservable, merge, Observable, of, Subject, Subscription } from "rxjs";
 import * as k8s from '@kubernetes/client-node';
 import { Config, V1ConfigMap } from "@kubernetes/client-node";
 import * as winston from "winston";
 import { readFileRx, watchRx } from "watch-rx-ts";
 import { join } from "path";
 import { existsSync } from "fs";
-import { delay, filter, map, mergeMap, retry,  switchMap, takeUntil, tap } from "rxjs/operators";
+import { delay, distinctUntilChanged, filter, map, mergeMap, retry, switchMap, takeUntil, tap } from "rxjs/operators";
 import { watchKubeResourceRx } from "k8s-watch-rx";
 
 function inputIsNotNullOrUndefined<T>(input: null | undefined | T): input is T {
@@ -31,7 +31,7 @@ export abstract class ConfigWatcher {
     protected onDestroy$ = new Subject<boolean>();
 
     protected _fileStore = new Map<string, string>();
-    public get fileStore(): ReadonlyMap<string, string>{
+    public get fileStore(): ReadonlyMap<string, string> {
         return this._fileStore;
     }
 
@@ -88,7 +88,7 @@ export class ConfigMapWatcher extends ConfigWatcher {
                 cfgMapWatchPath$.pipe(
                     switchMap(cfgMapWatchPath => watchKubeResourceRx<V1ConfigMap>(cfgMapWatchPath).pipe(retry()))
                 ),
-                { connector: () => new Subject()}
+                { connector: () => new Subject() }
             );
 
         const addedModifiedConfigMap$ = watcher$.pipe(
@@ -202,9 +202,9 @@ export class ConfigFileWatcher extends ConfigWatcher {
 
     async onInit(): Promise<void> {
 
-        const watcher$ = new ConnectableObservable(
+        const watcher$ = connectable(
             watchRx(this.paths, { followSymlinks: true }),
-            () => new Subject()
+            { connector: () => new Subject() }
         );
 
         // const watcher$ = watchRx(this.paths, { followSymlinks: true });
@@ -262,4 +262,72 @@ export class ConfigFileWatcher extends ConfigWatcher {
         super.onDestroy();
         this.connectableSubscription?.unsubscribe();
     }
+}
+
+
+
+export class ConfigObservableWatcher extends ConfigWatcher {
+    private connectableSubscription?: Subscription;
+
+    constructor(private source: Observable<{ [key: string]: string } | undefined | null>) {
+        super();
+    }
+
+    async onInit(): Promise<void> {
+
+        const watcher$ =
+            connectable(
+                this.source.pipe(map(data => (data === undefined || data === null) ? {} : data), distinctUntilChanged()),
+                { connector: () => new Subject() }
+            );
+
+        const sourceUpdate$ = watcher$.pipe(
+            map(data => {
+                const fileChanges: ConfigFileChange[] = [];
+                for (const filename in data) {
+                    if (Object.prototype.hasOwnProperty.call(data, filename)) {
+                        const content = data[filename];
+
+                        if (!this._fileStore.has(filename)) {
+                            fileChanges.push({ type: 'add', filename, content });
+                            this._fileStore.set(filename, content);
+                        } else {
+                            const oldContent = this._fileStore.get(filename);
+                            if (oldContent !== content) {
+                                fileChanges.push({ type: 'update', filename, content });
+                                this._fileStore.set(filename, content);
+                            }
+                        }
+                    }
+                }
+                for (const [filename, _] of this._fileStore) {
+                    if (!Object.prototype.hasOwnProperty.call(data, filename)) {
+                        fileChanges.push({ type: 'remove', filename, content: null });
+                        this._fileStore.delete(filename);
+                    }
+                }
+                return fileChanges;
+
+            }),
+            mergeMap(changes => changes)
+        );
+
+        sourceUpdate$.pipe(
+            takeUntil(this.onDestroy$),
+            filter(inputIsNotNullOrUndefined),
+            tap(change => {
+                this._fileChange$.next(change);
+            })
+        ).subscribe({
+            error: (err) => { this.log.error(`Error watching for observable config input`, { err }) }
+        });
+
+        this.connectableSubscription = watcher$.connect();
+    }
+
+    public override async onDestroy() {
+        super.onDestroy();
+        this.connectableSubscription?.unsubscribe();
+    }
+
 }

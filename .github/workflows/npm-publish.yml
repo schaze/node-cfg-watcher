@@ -16,8 +16,12 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+      - name: 'change version'
+        uses: reedyuk/npm-version@1.1.1
+        with:
+          version: ${{ github.event.release.tag_name }}
       - run: yarn
-      - run: yarn run gulp prod
+      - run: yarn build
       - run: yarn publish lib
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
