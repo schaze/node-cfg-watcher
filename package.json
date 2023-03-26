@@ -42,7 +42,7 @@
     "jsonschema": "~1.4.0",
     "k8s-watch-rx": "~0.3.4",
     "rxjs": "~7.4.0",
-    "watch-rx-ts": "~1.2.3",
+    "watch-rx-ts": "~1.2.4",
     "winston": "~3.3.3"
   }
 }

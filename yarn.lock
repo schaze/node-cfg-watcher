@@ -653,10 +653,10 @@ chokidar@^2.0.0:
   optionalDependencies:
     fsevents "^1.2.7"
 
-chokidar@~3.5.1:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.2.tgz#dba3976fcadb016f66fd365021d91600d01c1e75"
-  integrity sha512-ekGhOnNVPgT77r4K/U3GDhu+FQ2S8TnK/s2KbIGXi0SZWuwkZ2QNyfWdZW+TVfn84DpEP7rLeCt2UI6bJ8GwbQ==
+chokidar@~3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.3.tgz#1cf37c8707b932bd1af1ae22c0432e2acd1903bd"
+  integrity sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==
   dependencies:
     anymatch "~3.1.2"
     braces "~3.0.2"
@@ -3950,12 +3950,12 @@ vinyl@^2.0.0, vinyl@^2.1.0:
     remove-trailing-separator "^1.0.1"
     replace-ext "^1.0.0"
 
-watch-rx-ts@~1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/watch-rx-ts/-/watch-rx-ts-1.2.3.tgz#5c18bbe7e57abe22c6d7c240d0c3a9348fd57f68"
-  integrity sha512-trsgmBY13vVcRgDl6YVVo27FwXep0tjBAv7NRv6uwFoiy11+y20ZPS/BvpvFPkik6LUFMMMLrZDjRuuyQvBkCg==
+watch-rx-ts@~1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/watch-rx-ts/-/watch-rx-ts-1.2.4.tgz#f7a97c26fa2e456feff5450164e066981bc69061"
+  integrity sha512-ddxGxeCwtOGkFo68BCu2rtCzWBGKwvET1m4pVDF6/Z+/joGvcQW+dsCLWE0NLE+D1D7cn9Ubc8WB+d4BWY6mWg==
   dependencies:
-    chokidar "~3.5.1"
+    chokidar "~3.5.3"
     rxjs "~7.4.0"
 
 which-module@^1.0.0:
